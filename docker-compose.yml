@@ -80,6 +80,7 @@ services:
       - postgres
     volumes:
       - n8n_storage:/home/node/.n8n
+      - /home/lis/1.projects/1.loal-container/store:/home/node
     depends_on:
       postgres:
         condition: service_healthy
