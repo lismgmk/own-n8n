@@ -5,6 +5,7 @@ volumes:
   n8n_storage:
   pgadmin-data:
   my_db_storage:
+  grafana-storage: {}
 
 services:
   postgres:
@@ -84,6 +85,20 @@ services:
         condition: service_healthy
     networks:
       - common_network
+  grafana:
+    image: grafana/grafana:latest
+    # image: grafana/grafana:8.4.5
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    networks:
+      - common_network
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=12345678
 
 networks:
   common_network:
