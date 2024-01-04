@@ -30,6 +30,24 @@ services:
       - '5432:5432'
     networks:
       - common_network
+  # ngrok:
+  #   image: wernight/ngrok
+  #   container_name: ngrok
+  #   restart: unless-stopped
+  #   command:
+  #       - "ngrok"
+  #       - "start"
+  #       - "--all"
+  #       - "--config"
+  #       - "/etc/ngrok.yml"
+  #   volumes:
+  #       - ./ngrok.yml:/etc/ngrok.yml
+  #   ports:
+  #     - '4040:4040'
+  #   depends_on:
+  #     - n8n
+  #   networks:
+  #     - common_network
 
   my_postgres:
     image: postgres:11
