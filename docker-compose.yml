@@ -3,7 +3,6 @@ version: '3.8'
 volumes:
   db_storage:
   n8n_storage:
-  pgadmin-data:
   my_db_storage:
   grafana-storage: {}
 
@@ -30,24 +29,6 @@ services:
       - '5432:5432'
     networks:
       - common_network
-  # ngrok:
-  #   image: wernight/ngrok
-  #   container_name: ngrok
-  #   restart: unless-stopped
-  #   command:
-  #       - "ngrok"
-  #       - "start"
-  #       - "--all"
-  #       - "--config"
-  #       - "/etc/ngrok.yml"
-  #   volumes:
-  #       - ./ngrok.yml:/etc/ngrok.yml
-  #   ports:
-  #     - '4040:4040'
-  #   depends_on:
-  #     - n8n
-  #   networks:
-  #     - common_network
 
   my_postgres:
     image: postgres:11
@@ -61,23 +42,6 @@ services:
       - my_db_storage:/var/lib/postgresql/data
     ports:
       - '5433:5432'
-    networks:
-      - common_network
-
-  pg4:
-    image: dpage/pgadmin4
-    container_name: pgadmin4_container
-    restart: always
-    ports:
-      - '5050:80'
-    environment:
-      PGADMIN_DEFAULT_EMAIL: lismgmk2@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    depends_on:
-      postgres:
-        condition: service_healthy
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
     networks:
       - common_network
 
