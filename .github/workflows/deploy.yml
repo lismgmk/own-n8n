@@ -10,13 +10,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup SSH Agent
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+      # - name: Setup SSH Agent
+      #   uses: webfactory/ssh-agent@v0.5.4
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_KEY }}
       - name: Deploy to VM
-        run: |
-          ssh StrictHostKeyChecking=no lis@5.35.82.67 << EOF
+        uses: D3rHase/ssh-command-action@v0.2.2
+        with:
+          # host: ${{secrets.HOST}} # Remote server address / ip - required
+          host: 5.35.82.67 # Remote server address / ip - required
+          # port: ${{secrets.PORT}} # Remote server port -  Default: 22 - optional
+          # port: ${{secrets.PORT}} # Remote server port -  Default: 22 - optional
+          user: lis # Remote server user - required
+          # user: ${{secrets.USER}} # Remote server user - required
+          private_key: ${{secrets.SSH_KEY}} # Private ssh key registered on the remote server - required
+          command: 
+           |
+            << EOF
             set -e            
             cd ${{ secrets.FOLDER }}
             git branch
@@ -25,3 +35,41 @@ jobs:
             docker compose down --volumes
             docker compose -f docker-compose.yml up --build -d
             docker system prune -af
+
+        # run: |
+        #   ssh lis@5.35.82.67 << EOF
+        #     set -e            
+        #     cd ${{ secrets.FOLDER }}
+        #     git branch
+        #     git checkout dev
+        #     GIT_SSH_COMMAND="ssh -i ~/.ssh/${{ secrets.PATH_KEY }}" git pull
+        #     docker compose down --volumes
+        #     docker compose -f docker-compose.yml up --build -d
+        #     docker system prune -af
+
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Configure SSH
+  #       env:
+  #         USER:  ${{ secrets.SSH_USER }}
+  #         HOST: ${{ secrets.SSH_HOST }}
+  #         PRIVATE_KEY: ${{ secrets.SSH_KEY_API }}
+  #       run: |
+  #         mkdir -p ~/.ssh/
+  #         echo "$PRIVATE_KEY" > ~/.ssh/private.key
+  #         chmod 600 ~/.ssh/private.key
+  #         cat >>~/.ssh/config <<END
+  #         Host staging
+  #           HostName $HOST
+  #           User $USER
+  #           IdentityFile ~/.ssh/private.key
+  #           Port 22
+  #           StrictHostKeyChecking no
+  #         END
+
+  #     - name: Checkout to branch
+  #       run: ssh staging "~/ezraba/api/scripts/checkout.sh"
+
+  #     - name: Rebuild app
+  #       run: ssh staging "~/ezraba/api/scripts/deploy.sh \"${{ secrets.SSH_SUDO_PASSWORD }}\""
