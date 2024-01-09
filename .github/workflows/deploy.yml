@@ -10,36 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # - name: Setup SSH Agent
-      #   uses: webfactory/ssh-agent@v0.5.4
-      #   with:
-      #     ssh-private-key: ${{ secrets.SSH_KEY }}
-      # - name: Deploy to VM
-      #   uses: D3rHase/ssh-command-action@v0.2.2
-      #   with:
-      #     # host: ${{secrets.HOST}} # Remote server address / ip - required
-      #     host: 5.35.82.67 # Remote server address / ip - required
-      #     # port: ${{secrets.PORT}} # Remote server port -  Default: 22 - optional
-      #     # port: ${{secrets.PORT}} # Remote server port -  Default: 22 - optional
-      #     user: lis # Remote server user - required
-      #     # user: ${{secrets.USER}} # Remote server user - required
-      #     private_key: ${{secrets.SSH_KEY}} # Private ssh key registered on the remote server - required
-      #     command: 
-      #      |
-      #       set -e            
-      #       cd ${{ secrets.FOLDER }}
-      #       git branch
-      #       git checkout dev
-      #       GIT_SSH_COMMAND="ssh -i ~/.ssh/${{ secrets.PATH_KEY }}" git pull
-      #       docker compose down --volumes
-      #       docker compose -f docker-compose.yml up --build -d
-      #       docker system prune -af
-
-      - name: multiple command
+      - name: deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: 5.35.82.67
-          username: lis
+          host: ${{ secrets.HOST }}
+          username:  ${{ secrets.USER_NAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
             set -e            
