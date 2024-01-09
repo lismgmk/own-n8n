@@ -16,7 +16,7 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_KEY }}
       - name: Deploy to VM
         run: |
-          ssh lis@5.35.82.67 << EOF
+          ssh StrictHostKeyChecking=no lis@5.35.82.67 << EOF
             set -e            
             cd ${{ secrets.FOLDER }}
             git branch
