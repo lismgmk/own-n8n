@@ -5,6 +5,8 @@ volumes:
   n8n_storage:
   my_db_storage:
   grafana-storage: {}
+  postgres_data:
+    driver: local
 
 services:
   postgres:
@@ -69,20 +71,53 @@ services:
         condition: service_healthy
     networks:
       - common_network
-  grafana:
-    image: grafana/grafana:latest
-    # image: grafana/grafana:8.4.5
-    container_name: grafana
-    restart: unless-stopped
-    ports:
-      - '3000:3000'
+ 
+  postgres-keycloak:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
     networks:
       - common_network
-    volumes:
-      - grafana-storage:/var/lib/grafana
+      # ports:
+      #   - '5434:5432'
+  keycloak:
+    image: quay.io/keycloak/keycloak:legacy
+    container_name: keycloak
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=12345678
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres-keycloak
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: Pa55w0rd
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #JDBC_PARAMS: "ssl=true"
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres-keycloak
+    networks:
+      - common_network
+     # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   restart: unless-stopped
+  #   ports:
+  #     - '3000:3000'
+  #   networks:
+  #     - common_network
+  #   volumes:
+  #     - grafana-storage:/var/lib/grafana
+  #     - ./config/grafana.ini:/etc/grafana/grafana.ini
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=12345678
 
 networks:
   common_network:
