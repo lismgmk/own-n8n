@@ -1,9 +1,0 @@
-authtoken: 2N6FFhn6UNK8LZdmS8huf2TJjjm_6ZBoKc1f5c2L5nvtjeN5z
-web_addr: 0.0.0.0:4040
-tunnels:
-  n8n:
-    proto: http
-    addr: 127.0.0.1:5678
-    host_header: rewrite
-    bind_tls: true
-   

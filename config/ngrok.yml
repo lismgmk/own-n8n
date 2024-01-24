@@ -1,0 +1,8 @@
+authtoken: 2bIsoJnji9idSfsafASwyvs2Di7_4D1C8wgEVAKk6MoB9EKdp
+tunnels:
+  n8n:
+    proto: http
+    addr: n8n:5678
+    host_header: rewrite
+    bind_tls: true
+   
