@@ -1,10 +1,12 @@
 version: '3.8'
 
 volumes:
+  # prometheus_data: {}
+  # grafana_data: {}
   db_storage:
   n8n_storage:
   my_db_storage:
-  grafana-storage: {}
+  # grafana-storage: {}
   postgres_data:
     driver: local
 
@@ -95,7 +97,53 @@ services:
   #     - NGROK_PORT=n8n:5678
   #   networks:
   #     - common_network
- 
+  # prometheus:
+  #   container_name: prometheus
+  #   image: prom/prometheus:v2.28.1
+  #   volumes:
+  #     # - ./prometheus/:/etc/prometheus/
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  #     - prometheus_data:/prometheus
+  #     # - ../configs/prometheus.yml:/etc/prometheus/prometheus.yml
+  #   # command:
+  #   #   - '--config.file=/etc/prometheus/prometheus.yml'
+  #   #   - '--storage.tsdb.path=/prometheus'
+  #   #   - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+  #   #   - '--web.console.templates=/usr/share/prometheus/consoles'
+  #   ports:
+  #     - 9090:9090
+  #   # links:
+  #   #   - metrics:metrics
+  #   networks:
+  #     - common_network
+  # grafana:
+  #   container_name: grafana
+  #   image: grafana/grafana:8.3.4
+  #   depends_on:
+  #     - prometheus
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #     # - ./grafana/provisioning/:/etc/grafana/provisioning/
+  #     - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/rabbitmq.yaml
+  #     - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/prometheus.yaml
+  #     - ./grafana/dashboards:/dashboards
+  #   env_file:
+  #     - ./grafana/config.monitoring
+  #   # environment:
+  #     # https://grafana.com/plugins/flant-statusmap-panel
+  #     # https://grafana.com/plugins/grafana-piechart-panel
+  #     # https://grafana.com/plugins/grafana-polystat-panel
+  #     # https://grafana.com/plugins/jdbranham-diagram-panel
+  #     # https://grafana.com/plugins/michaeldmoore-multistat-panel
+  #     # https://grafana.com/plugins/vonage-status-panel
+  #     # https://grafana.com/plugins/yesoreyeram-boomtable-panel
+  #     # GF_INSTALL_PLUGINS: "flant-statusmap-panel,grafana-piechart-panel"
+  #   networks:
+  #     - common_network
+
+
   n8n:
     image: docker.n8n.io/n8nio/n8n
     container_name: n8n
@@ -109,7 +157,7 @@ services:
       - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
       - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
     ports:
-      - 5678:5678
+      - 5679:5678
     links:
       - postgres
     volumes:
@@ -120,7 +168,27 @@ services:
         condition: service_healthy
     networks:
       - common_network
- 
+  
+  # rabbitmq:
+  #   networks:
+  #     - common_network
+  #   container_name: rabbitmq
+  #   image: rabbitmq:3-management-alpine
+  #   restart: always
+  #   hostname: rabbitmq
+  #   command: >
+  #     bash -c "
+  #       rabbitmq-plugins enable rabbitmq_prometheus &&
+  #       rabbitmq-server
+  #     "
+  #   environment:
+  #     - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
+  #     - RABBITMQ_DEFAULT_USER=rmuser
+  #     - RABBITMQ_DEFAULT_PASS=LZuSUhXKvtnh*nYM
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #     - "15692:15692"
   # postgres-keycloak:
   #   image: postgres
   #   volumes:
