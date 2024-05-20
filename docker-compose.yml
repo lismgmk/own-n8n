@@ -1,6 +1,7 @@
 version: '3.8'
 
 volumes:
+  downloads:
   # prometheus_data: {}
   # grafana_data: {}
   db_storage:
@@ -94,7 +95,8 @@ services:
   #   depends_on:
   #     - n8n
   #   environment:
-  #     - NGROK_PORT=n8n:5678
+  #     # - NGROK_PORT=n8n:5678
+  #     - NGROK_PORT=browserless:3000
   #   networks:
   #     - common_network
   # prometheus:
@@ -143,9 +145,37 @@ services:
   #   networks:
   #     - common_network
 
-
+  browserless:
+    image: browserless/chrome:latest
+    ports:
+      - 3000:3000
+    environment:
+      # MAX_CONCURRENT_SESSIONS: 10
+      - TOKEN=CEA6J8PTLND9
+      - DEBUG=browserless:*
+      - MAX_CONCURRENT_SESSIONS=10
+      - CONNECTION_TIMEOUT=1200000
+      - MAX_QUEUE_LENGTH=20
+      - PREBOOT_CHROME=true
+      - DEMO_MODE=true
+      # - HOST=localhost
+      - ENABLE_DEBUGGER=true
+      # - TOKEN=${BROWSERLESS_TOKEN}
+      - PORT=3000
+      - WORKSPACE_DELETE_EXPIRED=true
+      - ALLOW_FILE_PROTOCOL=true
+      - DOWNLOAD_DIR=/downloads
+    container_name: "browserless"
+    volumes:
+      - ./downloads:/downloads
+    restart: always
+    networks:
+      - common_network
   n8n:
-    image: docker.n8n.io/n8nio/n8n
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    # image: docker.n8n.io/n8nio/n8n:1.27.2
     container_name: n8n
     restart: always
     user: '${UID}:${GID}'
@@ -156,8 +186,13 @@ services:
       - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
       - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
       - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
+      - DB_LOGGING_ENABLED=true
+      - DB_LOGGING_OPTIONS=all
+      - NODE_FUNCTION_ALLOW_EXTERNAL=*
+      - NODE_FUNCTION_ALLOW_BUILTIN=*
+      - N8N_ENCRYPTION_KEY=your-encryption-key
     ports:
-      - 5679:5678
+      - 5678:5678
     links:
       - postgres
     volumes:
@@ -202,7 +237,25 @@ services:
   #     # ports:
   #     #   - '5434:5432'
   # keycloak:
-  #   image: quay.io/keycloak/keycloak:legacy
+  # #   # image: quay.io/keycloak/keycloak:${KC_VERSION}
+  # #   image: bitnami/keycloak:22.0.1
+  # #   # command: ["start-dev", "--import-realm"]
+  # #   restart: unless-stopped
+  # #   environment:
+  # #     KC_DB: keycloak
+  # #     KC_DB_USERNAME: keycloak
+  # #     KC_DB_PASSWORD: password
+  # #     # KC_DB_URL: "jdbc:postgresql://postgres:5432/keycloak"
+  # #     KC_METRICS_ENABLED: true
+  # #     KC_LOG_LEVEL: ${KC_LOG_LEVEL}
+  # #     KC_REALM_NAME: ${KC_REALM_NAME}
+  # #     KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+  # #     KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+  # #     GF_URL: ${GF_HOSTNAME}:${GF_SERVER_HTTP_PORT}
+  # #     GF_ADMIN_USERNAME: ${GF_ADMIN_USERNAME}
+  # #     GF_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD}
+  #   # image: quay.io/keycloak/keycloak:legacy
+  #   image: bitnami/keycloak:22.0.1
   #   container_name: keycloak
   #   environment:
   #     DB_VENDOR: POSTGRES
@@ -212,9 +265,11 @@ services:
   #     DB_SCHEMA: public
   #     DB_PASSWORD: password
   #     KEYCLOAK_USER: admin
-  #     KEYCLOAK_PASSWORD: Pa55w0rd
+  #     KEYCLOAK_PASSWORD: 2156128Lis
+  #     KEYCLOAK_ADMIN: admin
+  #     KEYCLOAK_ADMIN_PASSWORD: 2156128Lis 
   #     # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-  #     #JDBC_PARAMS: "ssl=true"
+  #     # JDBC_PARAMS: "ssl=true"
   #   ports:
   #     - 8080:8080
   #   depends_on:
@@ -238,3 +293,5 @@ services:
 
 networks:
   common_network:
+
+  

@@ -1,8 +1,10 @@
-authtoken: 2bIsoJnji9idSfsafASwyvs2Di7_4D1C8wgEVAKk6MoB9EKdp
+version: 2
+authtoken: 2db6S52EkC2YmVZkAZLGlI9slGM_3bz7zYjiHVguutbBdTtGN
 tunnels:
   n8n:
     proto: http
-    addr: n8n:5678
+    addr: browserless:3000
+    # addr: n8n:5678
     host_header: rewrite
-    bind_tls: true
+    # bind_tls: true
    
