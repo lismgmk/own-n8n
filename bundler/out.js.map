@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["app.js"],
+  "sourcesContent": ["export default async function (context) {\n  const { page } = context;\n  const rndNumber = () => {\n    return Math.floor(Math.random() * (10 ** 6 - 0));\n  };\n\n  await page.goto('https://example.com/');\n  const url = await page.title();\n  const numbers = [...Array(5)].map(() => rndNumber());\n\n  return {\n    data: {\n      url,\n      numbers,\n    },\n    // Make sure to match the appropriate content here\n    type: 'application/json',\n  };\n}\n"],
+  "mappings": "MAAA,eAAOA,EAAwBC,EAAS,CACtC,GAAM,CAAE,KAAAC,CAAK,EAAID,EACXE,EAAY,IACT,KAAK,MAAM,KAAK,OAAO,GAAK,IAAM,EAAI,EAAE,EAGjD,MAAMD,EAAK,KAAK,sBAAsB,EACtC,IAAME,EAAM,MAAMF,EAAK,MAAM,EACvBG,EAAU,CAAC,GAAG,MAAM,CAAC,CAAC,EAAE,IAAI,IAAMF,EAAU,CAAC,EAEnD,MAAO,CACL,KAAM,CACJ,IAAAC,EACA,QAAAC,CACF,EAEA,KAAM,kBACR,CACF",
+  "names": ["app_default", "context", "page", "rndNumber", "url", "numbers"]
+}

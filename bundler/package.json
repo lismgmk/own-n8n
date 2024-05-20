@@ -1,0 +1,19 @@
+{
+  "name": "bundler",
+  "version": "1.0.0",
+  "main": "run.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "esbuild": "^0.21.3",
+    "express": "^4.19.2",
+    "https-proxy-agent": "^7.0.4",
+    "puppeteer": "^22.9.0",
+    "wscat": "^5.2.0"
+  }
+}
